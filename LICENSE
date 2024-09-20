@@ -1,0 +1,106 @@
+GNU AFFERO GENERAL PUBLIC LICENSE
+Version 3, 19 November 2007
+
+Copyright (C) [año] Free Software Foundation, Inc. <https://fsf.org/>
+Everyone is permitted to copy and distribute verbatim copies
+of this license document, but changing it is not allowed.
+
+                         Preamble
+
+The GNU Affero General Public License is a free software license
+that guarantees end users the freedom to run, study, share, and modify
+the software. In addition, it provides that all modified versions
+of the software must also be free software.
+
+The AGPL is a more stringent version of the GPL that ensures
+that the source code of the modified versions is made available
+to users when the software is used over a network.
+
+                           TERMS AND CONDITIONS
+
+0. Definitions.
+
+This License applies to any program or other work which contains
+a notice placed by the copyright holder saying it can be distributed
+under the terms of this General Public License. The "Program", below,
+refers to any such program or work, and a "work based on the Program"
+means either the Program or any derivative work under copyright law:
+that is to say, a work containing the Program or a portion of it,
+either verbatim or with modifications and/or translated into another
+language. (Hereinafter, translation is included without limitation in
+the term "modification".) Each licensee is addressed as "you".
+
+Activities other than copying, distribution and modification are not
+covered by this License; they are outside its scope. The act of running
+the Program is not restricted, and the output from the Program is
+covered only if its contents constitute a work based on the Program
+(as defined above).
+
+1. Source Code.
+
+The "source code" for a work means the preferred form of the work
+for making modifications to it. For an executable work, complete
+source code means all the source code for all modules it contains,
+plus any associated interface definition files, plus the scripts
+used to control compilation and installation of the executable.
+However, as a special exception, the source code distributed need not
+include anything that is normally distributed (in either source or
+binary form) with the major components (compiler, kernel, and so on)
+of the operating system on which the executable runs, unless that
+component itself accompanies the executable.
+
+2. Basic Permissions.
+
+You are permitted to use the Program, and you may make and distribute
+verbatim copies of the Program, provided that you duplicate all of
+the original copyright notices and license notices. You may also
+distribute modified versions of the Program, provided that you do
+the following:
+
+    a) You must cause the modified files to carry prominent notices
+    stating that you changed the files and the date of any change.
+
+    b) You must distribute the modified Program under the same license
+    as the original.
+
+    c) You must keep intact all notices stating that this License
+    applies to the Program and any other notices in the Program.
+
+3. Conveying Modified Source Versions.
+
+You may convey a work based on the Program, or the modifications to
+the Program, in the form of source code under the terms of this
+License, provided that you include a prominent notice stating that
+you have changed the files and the date of any change.
+
+4. Affero Network Server.
+
+If you interact with a user through a network using the Program,
+you must provide them with access to the source code of the Program.
+This is known as the "Affero" provision.
+
+5. No Additional Restrictions.
+
+You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License.
+
+6. Acceptance.
+
+You accept this License if you copy, modify, or distribute the
+Program.
+
+7. Termination.
+
+If you fail to comply with this License, your rights under it
+automatically terminate. However, if you do so fail and then
+comply with this License, your rights reinstated. The reinstatement
+is not retroactive.
+
+8. Other Licenses.
+
+You may not impose any additional restrictions on the recipients'
+exercise of the rights granted under this License.
+
+9. Warranty.
+
+There is no warranty for the Program; it is provided "as is".

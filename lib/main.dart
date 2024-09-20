@@ -63,24 +63,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     return GridView.builder(
                       padding: EdgeInsets.all(16.0),
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 320.0, // Tamaño máximo en el eje transversal
+                        maxCrossAxisExtent: 400.0, // Tamaño máximo en el eje transversal
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
-                        childAspectRatio: 1.0, // Relación de aspecto predeterminada
+                        childAspectRatio: 1.5, // Relación de aspecto predetermina
                       ),
                       itemCount: 12, // Número de elementos en el grid
                       itemBuilder: (context, index) {
                         return Container(
+                          height: 200.0,
                           decoration: BoxDecoration(
                             color: Color(0xFFE3EFFF),
                             borderRadius: BorderRadius.circular(10.0), // Border radius
                           ),
-                          child: Center(
-                            child: Text(
-                              'Item $index',
-                              style: TextStyle(color: Colors.black),
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                              'Turno No. $index',
+                              style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
                             ),
-                          ),
                         );
                       },
                     );
@@ -95,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 10,
             child: FloatingActionButton(
               onPressed: () {},
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.add),
+              backgroundColor: const Color.fromARGB(255, 0, 75, 173),
+              child: Icon(Icons.add, color: Colors.white,),
             ),
           ),
           // Menú lateral deslizante
@@ -121,7 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 0,
                 bottom: 0,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 2000), // Animación para suavizar la apertura/cierre
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.bounceIn, // Animación para suavizar la apertura/cierre
                   width: 330,
                   color: Colors.white,
                   padding: EdgeInsets.all(12.0),

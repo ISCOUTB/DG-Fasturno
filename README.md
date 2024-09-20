@@ -1,16 +1,3 @@
 # Fasturno
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Una aplicación que permite al barbero gestionar de manera eficiente la fila de espera en su barbería. La cual envía notificaciones por correo electrónico a los clientes cuando su turno está listo, informándoles que es el momento de recibir su corte, facilitando así la organización para todos y la comodidad al alcance de un click.

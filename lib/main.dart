@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // Encabezado
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     // Botón de menú
                     IconButton(
-                      icon: Icon(Icons.menu, color: Colors.black),
+                      icon: const Icon(Icons.menu, color: Colors.black),
                       onPressed: () {
                         setState(() {
                           isMenuOpen = true; // Abre el menú
@@ -58,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              Text("Turnos agendados", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 74, 173))),
+              const Text("Turnos agendados", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 74, 173))),
               // Grid responsivo
               Expanded(
                 child: LayoutBuilder(
@@ -83,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.all(10),
                           child: Text(
                               'Turno No. $index',
-                              style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
                             ),
                         );
                       },
@@ -100,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FloatingActionButton(
               onPressed: () {},
               backgroundColor: const Color.fromARGB(255, 0, 75, 173),
-              child: Icon(Icons.add, color: Colors.white,),
+              child: const Icon(Icons.add, color: Colors.white,),
             ),
           ),
           // Menú lateral deslizante
@@ -125,24 +124,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 0,
                 bottom: 0,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.bounceIn, // Animación para suavizar la apertura/cierre
                   width: 330,
                   color: Colors.white,
-                  padding: EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Ajustes',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             onPressed: () {
                               setState(() {
                                 isMenuOpen = false; // Cierra el menú
@@ -153,8 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       // Aquí va el contenido del menú
                       ListTile(
-                        title: Text('Pausar recordatorios',style: TextStyle(fontWeight: FontWeight.bold),),
-                        subtitle: Text("Activa o desactiva temporalmente los correos automáticos que recuerdan a los clientes cuando son sus turnos."),
+                        title: const Text('Pausar recordatorios',style: TextStyle(fontWeight: FontWeight.bold),),
+                        subtitle: const Text("Activa o desactiva temporalmente los correos automáticos que recuerdan a los clientes cuando son sus turnos."),
                         trailing: Switch(
                           value: _switchValue,
                           onChanged: (bool value) {
@@ -162,13 +161,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               _switchValue = value;
                             });
                           }),
-                        contentPadding: EdgeInsets.all(0),
+                        contentPadding: const EdgeInsets.all(0),
                         onTap: () {}
                         ),
                       ListTile(
-                        title: Text('Ver resumen de turnos', style: TextStyle(fontWeight: FontWeight.bold),),
-                        subtitle: Text("Visualiza cuantos clientes has atendido hoy y el tiempo promedio que demoras en atenderlos."),
-                        contentPadding: EdgeInsets.all(0),
+                        title: const Text('Ver resumen de turnos', style: TextStyle(fontWeight: FontWeight.bold),),
+                        subtitle: const Text("Visualiza cuantos clientes has atendido hoy y el tiempo promedio que demoras en atenderlos."),
+                        contentPadding: const EdgeInsets.all(0),
                         onTap: () {},
                       ),
                     ],

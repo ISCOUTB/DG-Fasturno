@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 void main() {
   runApp(MyApp());
@@ -55,14 +56,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              Text("Turnos agendados", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 74, 173))),
               // Grid responsivo
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    int columns = constraints.maxWidth > 600 ? 3 : 1;
+                    //int columns = constraints.maxWidth > 600 ? 3 : 1;
                     return GridView.builder(
-                      padding: EdgeInsets.all(16.0),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      padding: const EdgeInsets.all(16.0),
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 400.0, // Tamaño máximo en el eje transversal
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
@@ -73,10 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Container(
                           height: 200.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFE3EFFF),
+                            color: const Color(0xFFE3EFFF),
                             borderRadius: BorderRadius.circular(10.0), // Border radius
                           ),
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           child: Text(
                               'Turno No. $index',
                               style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),

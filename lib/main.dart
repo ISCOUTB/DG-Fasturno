@@ -68,22 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         maxCrossAxisExtent: 400.0, // Tamaño máximo en el eje transversal
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
-                        childAspectRatio: 1.5, // Relación de aspecto predetermina
+                        childAspectRatio: 1.7, // Relación de aspecto predeterminada
                       ),
-                      itemCount: 12, // Número de elementos en el grid
+                      itemCount: 8, // Número de elementos en el grid
                       itemBuilder: (context, index) {
-                        return Container(
-                          height: 200.0,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE3EFFF),
-                            borderRadius: BorderRadius.circular(10.0), // Border radius
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                              'Turno No. $index',
-                              style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
-                        );
+                        return TurnoCard(index: index+1);
                       },
                     );
                   },
@@ -174,6 +163,121 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ]
+        ],
+      ),
+    );
+  }
+}
+
+class TurnoCard extends StatelessWidget {
+  final int index;
+
+  TurnoCard({required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFFE3EFFF),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Texto de turno y reservación
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Turno No. $index',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Hora de reservación:',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  Text(
+                    '00:00',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Ícono de ticket con el texto debajo
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.local_activity, size: 40), // Ícono del ticket
+                  SizedBox(height: 30.0), // Espacio entre ícono y texto
+                  Text(
+                    'Hace n horas, minutos',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          SizedBox(height: 8.0),
+
+          // Texto "Agendado a:"
+          Text(
+            'Agendado a:',
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14.0,
+            ),
+          ),
+
+          // Nombre y apellido del cliente con el menú
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Nombre y Apellido del cliente',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              PopupMenuButton<String>(
+                icon: Icon(Icons.more_vert),
+                onSelected: (value) {
+                  // Lógica para manejar las acciones de los botones
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'Más información', 'Atender', 'Liberar'}
+                      .map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
+            ],
+          ),
+          Spacer(),
         ],
       ),
     );

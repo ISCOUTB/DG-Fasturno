@@ -186,7 +186,7 @@ class TurnoCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.right,
             children: [
               // Texto de turno y reservación
               Column(

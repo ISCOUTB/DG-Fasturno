@@ -221,7 +221,7 @@ class TurnoCard extends StatelessWidget {
 
               // Ícono de ticket con el texto debajo
               Column(
-                crossAxisAlignment: CrossAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Icon(Icons.local_activity, size: 40), // Ícono del ticket
                   SizedBox(height: 30.0), // Espacio entre ícono y texto

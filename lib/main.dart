@@ -1,15 +1,18 @@
+import 'package:fasturno/formulario/turno_form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: const HomeScreen(),
       theme: ThemeData(
         primaryColor: Colors.blue, // Color principal
       ),
@@ -18,6 +21,8 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -96,7 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 20,
             right: 10,
             child: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => const TurnoFormDialog(),
+                );
+              },
               backgroundColor: const Color.fromARGB(255, 0, 75, 173),
               child: const Icon(Icons.add, color: Colors.white,),
             ),
@@ -183,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class TurnoCard extends StatelessWidget {
   final int index;
 
-  const TurnoCard({required this.index});
+  const TurnoCard({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {

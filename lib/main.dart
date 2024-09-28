@@ -1,5 +1,6 @@
 import 'package:fasturno/formulario/turno_form_dialog.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 void main() {
   runApp(const MyApp());
@@ -60,34 +61,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const Text("Turnos agendados", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 74, 173))),
+              const Padding(
+                padding: EdgeInsets.all(16), 
+                child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Turnos agendados", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 74, 173)), textAlign: TextAlign.left),
+              ),
+              ),
               // Grid responsivo
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     //int columns = constraints.maxWidth > 600 ? 3 : 1;
                     return GridView.builder(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.only(
+                        top: 16,
+                        left: 16,
+                        right: 16,
+                        bottom: 80
+                      ),
                       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 400.0, // Tamaño máximo en el eje transversal
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
-                        childAspectRatio: 1.5, // Relación de aspecto predetermina
+                        childAspectRatio: 1.7, // Relación de aspecto predeterminada
                       ),
-                      itemCount: 12, // Número de elementos en el grid
+                      itemCount: 8, // Número de elementos en el grid
                       itemBuilder: (context, index) {
-                        return Container(
-                          height: 200.0,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE3EFFF),
-                            borderRadius: BorderRadius.circular(10.0), // Border radius
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                              'Turno No. $index',
-                              style: const TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
-                            ),
-                        );
+                        return TurnoCard(index: index+1);
                       },
                     );
                   },
@@ -103,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => const TurnoFormDialog(), // Llama al formulario
-      );
+                  builder: (BuildContext context) => const TurnoFormDialog(),
+                );
               },
               backgroundColor: const Color.fromARGB(255, 0, 75, 173),
               child: const Icon(Icons.add, color: Colors.white,),
@@ -185,6 +186,122 @@ class _HomeScreenState extends State<HomeScreen> {
             ]
         ],
       ),
+    );
+  }
+}
+
+class TurnoCard extends StatelessWidget {
+  final int index;
+
+  const TurnoCard({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3EFFF),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Texto de turno y reservación
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Turno No. $index',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  const Text(
+                    'Hora de reservación:',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  const Text(
+                    '00:00',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Ícono de ticket con el texto debajo
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Icon(Icons.local_activity, size: 40), // Ícono del ticket
+                  SizedBox(height: 30.0), // Espacio entre ícono y texto
+                  Text(
+                    'Hace n horas, minutos',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8.0),
+
+          // Texto "Agendado a:"
+          const Text(
+            'Agendado a:',
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14.0,
+            ),
+          ),
+
+          // Nombre y apellido del cliente con el menú
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Nombre y Apellido del cliente',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                tooltip: "Más opciones",
+                onSelected: (value) {
+                  // Lógica para manejar las acciones de los botones
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'Más información', 'Atender', 'Liberar'}
+                      .map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+
     );
   }
 }

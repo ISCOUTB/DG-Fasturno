@@ -1,9 +1,5 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr
-import smtplib
-import os
-from email.mime.text import MIMEText
-import ssl
 import win32com.client as win32
 
 app = FastAPI()
@@ -38,4 +34,5 @@ async def send_reminder(email_data: EmailSchema):
     except Exception as e:
         # Manejar el error si el envío falla
         raise HTTPException(status_code=500, detail=f"No se pudo enviar el correo: {e}")
+#Para probar la API mediante CMD
 #curl -X POST "http://localhost:8000/send-reminder-outlook/" -H "Content-Type: application/json" -d "{\"to_email\": \"zlisandro5@gmail.com\", \"subject\": \"Recordatorio de Turno\", \"message\": \"Hola, este es un recordatorio para tu turno de barber\u00eda ma\u00f1ana a las 10 AM.\"}"

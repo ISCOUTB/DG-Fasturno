@@ -11,7 +11,7 @@ load_dotenv()
 # Variables de entorno para el correo
 password = os.getenv("PASSWORD")
 print(password)
-email_sender = 'fasturnonotifications@gmail.com'
+email_sender = ''
 
 # Esquema de datos para el correo
 class EmailSchema(BaseModel):

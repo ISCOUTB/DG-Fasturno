@@ -27,6 +27,13 @@ class _TurnosListPageState extends State<TurnosListPage> {
     });
   }
 
+  // Método para agregar un nuevo turno
+  void _agregarTurno(Turno nuevoTurno) {
+    setState(() {
+      _turnos.add(nuevoTurno);  // Agregar el turno a la lista
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +46,8 @@ class _TurnosListPageState extends State<TurnosListPage> {
           final turno = _turnos[index];
           return ListTile(
             title: Text(turno.nombre),
-            subtitle: Text('Fecha: ${turno.fecha.toLocal()}'),
+            subtitle: Text('Fecha: ${DateTime.parse(turno.fecha).toLocal()}'),
+
           );
         },
       ),

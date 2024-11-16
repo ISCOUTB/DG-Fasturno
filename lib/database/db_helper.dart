@@ -10,10 +10,10 @@ void initializeDatabase() {
 }
 
 // Llama a la función de inicialización al comenzar
-
-
 class DatabaseHelper {
   static Database? _database;
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
   static const _databaseName = 'turnos.db';
   static const _databaseVersion = 1;
   static const table = 'turnos';
@@ -24,8 +24,7 @@ class DatabaseHelper {
   static const columnEmail = 'email';
   static const columnFecha = 'fecha';
 
-  DatabaseHelper._privateConstructor();
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+
 
   Future<Database> get database async {
     if (_database != null) return _database!;

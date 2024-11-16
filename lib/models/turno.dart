@@ -4,7 +4,7 @@ class Turno {
   String apellido;
   String telefono;
   String email;
-  DateTime fecha;
+  String fecha;
 
   Turno({
     this.id,
@@ -12,8 +12,8 @@ class Turno {
     required this.apellido,
     required this.telefono,
     required this.email,
-    required this.fecha,
-  });
+    required DateTime fecha,
+  }) : fecha = fecha.toIso8601String();
 
   // Convertir el turno en un mapa para insertarlo en la base de datos
   Map<String, dynamic> toMap() {
@@ -23,7 +23,7 @@ class Turno {
     'apellido': apellido,
     'telefono': telefono,
     'email': email,
-    'fecha': fecha.toIso8601String(),
+    'fecha': fecha,
   };
 }
 

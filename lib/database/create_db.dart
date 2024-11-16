@@ -1,73 +1,128 @@
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../models/turno.dart';
 
+// Inicializa el databaseFactory y la configuración de FFI
+void initializeDatabase() {
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi; // Asigna el databaseFactory FFI
+}
+
+// Llama a la función de inicialización al comenzar
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
+  DatabaseHelper._privateConstructor();
+  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  static const _databaseName = 'turnos.db';
+  static const _databaseVersion = 1;
+  static const table = 'turnos';
+  static const columnId = 'id';
+  static const columnNombre = 'nombre';
+  static const columnApellido = 'apellido';
+  static const columnTelefono = 'telefono';
+  static const columnEmail = 'email';
+  static const columnFecha = 'fecha';
 
-  // Nombre de la base de datos
-  static const String _dbName = 'turnos_clientes.db';
 
-  // Constructor privado
-  DatabaseHelper._internal();
 
-  // Singleton
-  factory DatabaseHelper() {
-    return _instance;
-  }
-
-  // Obtener la base de datos, inicializándola si es necesario
   Future<Database> get database async {
     if (_database != null) return _database!;
-
-    // Inicializar la base de datos
     _database = await _initDatabase();
     return _database!;
   }
 
-  // Inicializar la base de datos
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, _dbName);
-
+    final path = join(dbPath, _databaseName);
     return await openDatabase(
       path,
-      version: 1,
+      version: _databaseVersion,
       onCreate: _onCreate,
     );
   }
 
-  // Crear las tablas en la base de datos
-  Future<void> _onCreate(Database db, int version) async {
-    // Crear la tabla clientes
+  Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE clientes (
-        cliente_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
-        apellido TEXT NOT NULL,
-        telefono TEXT,
-        correo TEXT
-      )
-    ''');
-
-    // Crear la tabla turnos con clave foránea cliente_id
-    await db.execute('''
-      CREATE TABLE turnos (
-        turno_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cliente_id INTEGER,
-        hora_reserva TEXT NOT NULL,
-        hora_inicio TEXT,
-        hora_fin TEXT,
-        fecha_reserva TEXT NOT NULL,
-        estado INTEGER CHECK (estado IN (0, 1)) NOT NULL,
-        FOREIGN KEY (cliente_id) REFERENCES clientes (cliente_id)
+      CREATE TABLE $table (
+        $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+        $columnNombre TEXT NOT NULL,
+        $columnApellido TEXT NOT NULL,
+        $columnTelefono TEXT NOT NULL,
+        $columnEmail TEXT NOT NULL,
+        $columnFecha TEXT NOT NULL
       )
     ''');
   }
 
-  // Método para cerrar la base de datos (opcional)
-  Future<void> closeDatabase() async {
-    final db = await database;
-    db.close();
+  Future<int> insertarTurno(Turno turno) async {
+  try {
+    Database db = await instance.database;
+    return await db.insert(
+      table,
+      turno.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  } catch (e) {
+    print("Error al insertar el turno: $e");
+    rethrow; // Vuelve a lanzar la excepción para que pueda ser manejada en otro lugar si es necesario
   }
+}
+
+Future<List<Turno>> obtenerTurnos() async {
+  try {
+    Database db = await instance.database;
+    var result = await db.query(table);
+    return result.isNotEmpty
+        ? result.map((e) => Turno.fromMap(e)).toList()
+        : [];
+  } catch (e) {
+    print("Error al obtener los turnos: $e");
+    return []; // Retorna una lista vacía en caso de error
+  }
+}
+
+Future<Turno?> obtenerTurnoPorId(int id) async {
+  try {
+    Database db = await instance.database;
+    var result = await db.query(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+    return result.isNotEmpty ? Turno.fromMap(result.first) : null;
+  } catch (e) {
+    print("Error al obtener el turno con id $id: $e");
+    return null; // Retorna null si ocurre un error
+  }
+}
+
+Future<int> actualizarTurno(Turno turno) async {
+  try {
+    Database db = await instance.database;
+    return await db.update(
+      table,
+      turno.toMap(),
+      where: '$columnId = ?',
+      whereArgs: [turno.id],
+    );
+  } catch (e) {
+    print("Error al actualizar el turno: $e");
+    return 0; // Retorna 0 si ocurre un error
+  }
+}
+
+Future<int> eliminarTurno(int id) async {
+  try {
+    Database db = await instance.database;
+    return await db.delete(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+  } catch (e) {
+    print("Error al eliminar el turno con id $id: $e");
+    return 0; // Retorna 0 si ocurre un error
+  }
+}
 }

@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:fasturno/database/create_db.dart';
-import 'package:fasturno/formulario/turno_form_dialog.dart';
+import '../formulario/turno_form_dialog.dart';
+import "../models/turno.dart";
 
+String obtenerHora(String dateTimeString) {
+  try {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  } catch (e) {
+    return "Formato de fecha no válido";
+  }
+}
 void main() {
+  // Inicializa la base de datos aquí
+  initializeDatabase();
+
   runApp(const MyApp());
+}
+
+void initializeDatabase() {
+  // Establece la fábrica de base de datos para usar con ffi
+  databaseFactory = databaseFactoryFfi;
 }
 
 class MyApp extends StatelessWidget {
@@ -29,19 +47,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Turno> turnos = [];
   bool isMenuOpen = false;
   bool _switchValue = false;
   late Future<void> _dbFuture; // Futuro para la inicialización de la base de datos
+
 
   @override
   void initState() {
     super.initState();
     // Inicializa la base de datos cuando inicia el widget
     _dbFuture = _initializeDatabase();
+    _loadTurnos();
   }
 
+  Future<void> _loadTurnos() async {
+    final dbHelper = DatabaseHelper.instance;
+    turnos = await dbHelper.obtenerTurnos();
+    setState(() {}); // Actualiza la interfaz
+  }
+
+
   Future<void> _initializeDatabase() async {
-    final dbHelper = DatabaseHelper();
+    final dbHelper = DatabaseHelper.instance;
     await dbHelper.database;
   }
 
@@ -97,9 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisSpacing: 10.0,
                         childAspectRatio: 1.7,
                       ),
-                      itemCount: 8, // Número de elementos en el grid
+                      itemCount: turnos.length, // Número de elementos en el grid
                       itemBuilder: (context, index) {
-                        return TurnoCard(index: index + 1);
+                        return TurnoCard(turno: turnos[index]);
                       },
                     );
                   },
@@ -143,21 +171,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFloatingButton(BuildContext context) {
-    return Positioned(
-      bottom: 20,
-      right: 10,
-      child: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => const TurnoFormDialog(),
-          );
-        },
-        backgroundColor: const Color.fromARGB(255, 0, 75, 173),
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-    );
-  }
+  return Positioned(
+    bottom: 20,
+    right: 10,
+    child: FloatingActionButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return TurnoFormDialog(
+              onTurnoGuardado: () {
+                setState(() {
+                  _loadTurnos();  // Recargar la lista de turnos
+                });
+              },
+            );
+          },
+        );
+      },
+      backgroundColor: const Color.fromARGB(255, 0, 75, 173),
+      child: const Icon(Icons.add, color: Colors.white),
+    ),
+  );
+}
+
+
 
   Widget _buildSideMenu() {
     return Stack(
@@ -249,9 +287,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class TurnoCard extends StatelessWidget {
-  final int index;
+  final Turno turno;
 
-  const TurnoCard({super.key, required this.index});
+  const TurnoCard({super.key, required this.turno});
 
   @override
   Widget build(BuildContext context) {
@@ -273,71 +311,90 @@ class TurnoCard extends StatelessWidget {
   }
 
   Widget _buildTurnoHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Expanded(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Turno No. $index',
+              'Turno No. ${turno.id}',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 18.0,
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 4.0),
+            // Coloca la hora debajo del título
             const Text(
               'Hora de reservación:',
               style: TextStyle(color: Colors.black54, fontSize: 14.0),
             ),
-            const Text(
-              '00:00',
-              style: TextStyle(
+            const SizedBox(height: 4.0),
+            Text(
+              obtenerHora(turno.fecha),
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Icon(Icons.local_activity, size: 40),
-            SizedBox(height: 30.0),
-            Text(
-              'Hace n horas, minutos',
-              style: TextStyle(color: Colors.black54, fontSize: 14.0),
+            const SizedBox(height: 2.0),
+            // Texto "Recién" alineado a la derecha
+            Align(
+              alignment: Alignment.topRight,
+              child: Expanded(
+                child: const Text(
+                'Recién', // Texto descriptivo de tiempo
+                style: TextStyle(color: Colors.black54, fontSize: 14.0),
+                )
+              ),
             ),
           ],
         ),
-      ],
-    );
+      ),
+      const Icon(Icons.local_activity, size: 32), // Tamaño del ícono ajustado
+    ],
+  );
   }
-
   Widget _buildClientInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'Nombre y Apellido del cliente',
-          style: TextStyle(color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w900),
-        ),
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert),
-          tooltip: "Más opciones",
-          onSelected: (value) {
-            // Lógica para manejar acciones del menú
-          },
-          itemBuilder: (BuildContext context) => [
-            const PopupMenuItem<String>(value: 'info', child: Text('Más información')),
-            const PopupMenuItem<String>(value: 'attend', child: Text('Atender')),
-            const PopupMenuItem<String>(value: 'release', child: Text('Liberar')),
-          ],
-        ),
-      ],
-    );
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Agendado a:',
+            style: TextStyle(color: Colors.black54, fontSize: 14.0),
+          ),
+          Text(
+            '${turno.nombre} ${turno.apellido}',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+      PopupMenuButton<String>(
+        icon: const Icon(Icons.more_vert),
+        tooltip: "Más opciones",
+        onSelected: (value) {
+          // Lógica para manejar acciones del menú
+        },
+        itemBuilder: (BuildContext context) => [
+          const PopupMenuItem<String>(value: 'info', child: Text('Más información')),
+          const PopupMenuItem<String>(value: 'attend', child: Text('Atender')),
+          const PopupMenuItem<String>(value: 'release', child: Text('Liberar')),
+        ],
+      ),
+    ],
+  );
   }
 }

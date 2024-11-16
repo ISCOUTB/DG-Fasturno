@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:fasturno/database/create_db.dart';
@@ -12,16 +13,25 @@ String obtenerHora(String dateTimeString) {
     return "Formato de fecha no válido";
   }
 }
+
 void main() {
   // Inicializa la base de datos aquí
   initializeDatabase();
-
   runApp(const MyApp());
 }
 
 void initializeDatabase() {
   // Establece la fábrica de base de datos para usar con ffi
-  databaseFactory = databaseFactoryFfi;
+  //databaseFactory = databaseFactoryFfi;
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    // Usa sqflite_common_ffi para entornos de escritorio
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  } else {
+    // Usa la implementación estándar para Android/iOS
+    databaseFactory =
+        databaseFactory; // Esto usa la implementación nativa de sqflite
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -50,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Turno> turnos = [];
   bool isMenuOpen = false;
   bool _switchValue = false;
-  late Future<void> _dbFuture; // Futuro para la inicialización de la base de datos
-
+  late Future<void>
+      _dbFuture; // Futuro para la inicialización de la base de datos
 
   @override
   void initState() {
@@ -67,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {}); // Actualiza la interfaz
   }
 
-
   Future<void> _initializeDatabase() async {
     final dbHelper = DatabaseHelper.instance;
     await dbHelper.database;
@@ -82,7 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error al cargar la base de datos: ${snapshot.error}'));
+          return Center(
+              child: Text('Error al cargar la base de datos: ${snapshot.error}',
+                  style: TextStyle(fontSize: 14)));
         }
         return _buildMainScreen();
       },
@@ -118,14 +129,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      padding: const EdgeInsets.only(
+                        top: 16, // Mantén el padding superior
+                        left: 16, // Mantén el padding izquierdo
+                        right: 16, // Mantén el padding derecho
+                        bottom: 100, // Aumenta el padding inferior
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 400.0,
                         mainAxisSpacing: 10.0,
                         crossAxisSpacing: 10.0,
-                        childAspectRatio: 1.7,
+                        childAspectRatio: 1.6,
                       ),
-                      itemCount: turnos.length, // Número de elementos en el grid
+                      itemCount:
+                          turnos.length, // Número de elementos en el grid
                       itemBuilder: (context, index) {
                         return TurnoCard(turno: turnos[index]);
                       },
@@ -145,57 +163,58 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Logo
-          Image.asset(
-            'assets/fasturno.PNG', // Reemplazar con la ruta correcta
-            height: 25,
-          ),
-          // Botón de menú
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
-            onPressed: () {
-              setState(() {
-                isMenuOpen = true; // Abre el menú
-              });
-            },
-          ),
-        ],
+    return SafeArea(
+      // Esto asegura que el encabezado no se superponga a la barra de estado
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Logo
+            Image.asset(
+              'assets/fasturno.PNG', // Reemplazar con la ruta correcta
+              height: 25,
+            ),
+            // Botón de menú
+            IconButton(
+              icon: const Icon(Icons.menu, color: Colors.black),
+              onPressed: () {
+                setState(() {
+                  isMenuOpen = true; // Abre el menú
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFloatingButton(BuildContext context) {
-  return Positioned(
-    bottom: 20,
-    right: 10,
-    child: FloatingActionButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return TurnoFormDialog(
-              onTurnoGuardado: () {
-                setState(() {
-                  _loadTurnos();  // Recargar la lista de turnos
-                });
-              },
-            );
-          },
-        );
-      },
-      backgroundColor: const Color.fromARGB(255, 0, 75, 173),
-      child: const Icon(Icons.add, color: Colors.white),
-    ),
-  );
-}
-
-
+    return Positioned(
+      bottom: 20,
+      right: 10,
+      child: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TurnoFormDialog(
+                onTurnoGuardado: () {
+                  setState(() {
+                    _loadTurnos(); // Recargar la lista de turnos
+                  });
+                },
+              );
+            },
+          );
+        },
+        backgroundColor: const Color.fromARGB(255, 0, 75, 173),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
 
   Widget _buildSideMenu() {
     return Stack(
@@ -213,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        // Contenido del menú
+        // Contenido del menú envuelto en un SafeArea
         Positioned(
           right: 0,
           top: 0,
@@ -224,12 +243,15 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 330,
             color: Colors.white,
             padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildMenuHeader(),
-                _buildMenuOptions(),
-              ],
+            child: SafeArea(
+              // Esto asegura que el contenido del menú no se sobreponga a las áreas no seguras
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildMenuHeader(),
+                  _buildMenuOptions(),
+                ],
+              ),
             ),
           ),
         ),
@@ -261,8 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         ListTile(
-          title: const Text('Pausar recordatorios', style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: const Text("Activa o desactiva temporalmente los correos automáticos."),
+          title: const Text('Pausar recordatorios',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: const Text(
+              "Activa o desactiva temporalmente los correos automáticos."),
           trailing: Switch(
             value: _switchValue,
             onChanged: (bool value) {
@@ -274,7 +298,8 @@ class _HomeScreenState extends State<HomeScreen> {
           contentPadding: const EdgeInsets.all(0),
         ),
         ListTile(
-          title: const Text('Ver resumen de turnos', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text('Ver resumen de turnos',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: const Text("Visualiza cuántos clientes has atendido hoy."),
           contentPadding: const EdgeInsets.all(0),
           onTap: () {
@@ -310,91 +335,96 @@ class TurnoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTurnoHeader() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.start,
+Widget _buildTurnoHeader() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start, // Alinea todos los elementos a la izquierda
     children: [
-      Expanded(
-        child: Column(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Separa el texto y el icono
+        children: [
+          // Coloca el título y la hora en la parte izquierda
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Turno No. ${turno.id}',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 4.0),
+              const Text(
+                'Hora de reservación:',
+                style: TextStyle(color: Colors.black54, fontSize: 14.0),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                obtenerHora(turno.fecha),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2.0),
+            ],
+          ),
+          const Icon(Icons.local_activity, size: 32),
+        ],
+      ),
+      // Alinea el texto "Recién" a la derecha de la pantalla
+      Align(
+        alignment: Alignment.topRight,
+        child: Text(
+            'Recién', // Texto descriptivo de tiempo
+            style: TextStyle(color: Colors.black54, fontSize: 14.0),
+        ),
+      ),
+    ],
+  );
+}
+
+
+  Widget _buildClientInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Turno No. ${turno.id}',
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 4.0),
-            // Coloca la hora debajo del título
             const Text(
-              'Hora de reservación:',
+              'Agendado a:',
               style: TextStyle(color: Colors.black54, fontSize: 14.0),
             ),
-            const SizedBox(height: 4.0),
             Text(
-              obtenerHora(turno.fecha),
+              '${turno.nombre} ${turno.apellido}',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 2.0),
-            // Texto "Recién" alineado a la derecha
-            Align(
-              alignment: Alignment.topRight,
-              child: Expanded(
-                child: const Text(
-                'Recién', // Texto descriptivo de tiempo
-                style: TextStyle(color: Colors.black54, fontSize: 14.0),
-                )
+                fontWeight: FontWeight.w900,
               ),
             ),
           ],
         ),
-      ),
-      const Icon(Icons.local_activity, size: 32), // Tamaño del ícono ajustado
-    ],
-  );
-  }
-  Widget _buildClientInfo() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Agendado a:',
-            style: TextStyle(color: Colors.black54, fontSize: 14.0),
-          ),
-          Text(
-            '${turno.nombre} ${turno.apellido}',
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-      PopupMenuButton<String>(
-        icon: const Icon(Icons.more_vert),
-        tooltip: "Más opciones",
-        onSelected: (value) {
-          // Lógica para manejar acciones del menú
-        },
-        itemBuilder: (BuildContext context) => [
-          const PopupMenuItem<String>(value: 'info', child: Text('Más información')),
-          const PopupMenuItem<String>(value: 'attend', child: Text('Atender')),
-          const PopupMenuItem<String>(value: 'release', child: Text('Liberar')),
-        ],
-      ),
-    ],
-  );
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          tooltip: "Más opciones",
+          onSelected: (value) {
+            // Lógica para manejar acciones del menú
+          },
+          itemBuilder: (BuildContext context) => [
+            const PopupMenuItem<String>(
+                value: 'info', child: Text('Más información')),
+            const PopupMenuItem<String>(
+                value: 'attend', child: Text('Atender')),
+            const PopupMenuItem<String>(
+                value: 'release', child: Text('Liberar')),
+          ],
+        ),
+      ],
+    );
   }
 }
